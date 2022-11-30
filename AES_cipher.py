@@ -7,6 +7,8 @@ from base64 import b64decode
 from difflib import SequenceMatcher
 
 
+
+
 from Crypto.Util.Padding import pad, unpad
 
 propagate_error = True
@@ -15,25 +17,34 @@ def generate_data():
     i=0
     data=""
     while i<block_num:
-        data += "secretsecretsecr"
+        # data += "secretsecretsecr"
+        data += "aaaaaaaaaaaaaaaa"
         i +=1
     return data
 def generate_error(cipher_text):
     if not propagate_error:
         return cipher_text
+  
     barray = bytearray(cipher_text)
-    for i in range(16):
-        barray[i] = (barray[i] + 1) % 255
+    print('barray[0]',barray[0])
+    barray[0] = barray[0] ^ 1 
+    print('barray[0]',barray[0])
+
+    # barray[31] = (barray[31] + 8) % 255
+
     cipher_text = bytes(barray)
     return cipher_text
 def check_error_propagation(text1 , text2 , mode):
+   
     error = 0
     for i in range(len(text1)):
         if text1[i] != text2[i]:
             error += 1
+  
+    print('llttt  ' , text1 , text2)
     error_ratio =  error/len(text1) * 100
 
-    print('error for' , mode , error_ratio , '%')
+    print('error for' , mode , error , '%')
     
 
 
@@ -46,6 +57,7 @@ def AES_CBC():
     cipher = AES.new(key, AES.MODE_CBC)
     ct_bytes = cipher.encrypt(pad(data, AES.block_size))
     ct_bytes = generate_error(ct_bytes)
+
     iv = b64encode(cipher.iv).decode('utf-8')
     ct = b64encode(ct_bytes).decode('utf-8')
     result = json.dumps({'iv':iv, 'ciphertext':ct})
