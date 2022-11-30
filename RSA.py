@@ -34,7 +34,7 @@ def test_RSA():
     start_time = time.time()
 
     r = RSA_encryption( data , publicKey)
-    RSA_decryption( r  , privateKey)
+    decrypted_text = RSA_decryption( r  , privateKey)
 
     end_time = time.time()
     print('time taken for RSA: ',  (end_time - start_time), ' sec')

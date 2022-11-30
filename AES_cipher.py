@@ -12,12 +12,11 @@ from difflib import SequenceMatcher
 from Crypto.Util.Padding import pad, unpad
 
 propagate_error = True
-block_num = 4
+block_num = 1000
 def generate_data():
     i=0
     data=""
     while i<block_num:
-        # data += "secretsecretsecr"
         data += "aaaaaaaaaaaaaaaa"
         i +=1
     return data
@@ -26,25 +25,19 @@ def generate_error(cipher_text):
         return cipher_text
   
     barray = bytearray(cipher_text)
-    print('barray[0]',barray[0])
     barray[0] = barray[0] ^ 1 
-    print('barray[0]',barray[0])
 
-    # barray[31] = (barray[31] + 8) % 255
 
     cipher_text = bytes(barray)
     return cipher_text
 def check_error_propagation(text1 , text2 , mode):
-   
-    error = 0
-    for i in range(len(text1)):
-        if text1[i] != text2[i]:
-            error += 1
-  
-    print('llttt  ' , text1 , text2)
-    error_ratio =  error/len(text1) * 100
 
-    print('error for' , mode , error , '%')
+    error = 0
+    for i in range(int(len(text1) / 16)):
+        if text1[i*16 : (i+1)*16 ] != text2[i*16 : (i+1)*16 ]:
+            error += 1
+
+    print('error for' , mode , error , 'block')
     
 
 
@@ -71,7 +64,6 @@ def AES_CBC():
         check_error_propagation(data , pt , 'AES.MODE_CBC')
     except (ValueError, KeyError):
         print("Incorrect decryption")
-    # print(result)
     end_time = time.time()
     print('time taken for CBC ', (end_time - start_time), ' sec')
 def AES_ECB():
@@ -81,18 +73,14 @@ def AES_ECB():
     cipher = AES.new(key, mode)
     ciphertext = cipher.encrypt(data)
     ciphertext= generate_error(ciphertext)
-    # nonce = cipher.nonce
-
 
     cipher = AES.new(key, mode)
     decipher_data = cipher.decrypt(ciphertext)
     check_error_propagation(data , decipher_data , 'AES.MODE_ECB')
 
-    # print("data: ", decipher_data)
-
     end_time = time.time()
-
     print('time taken for ECB:' ,  (end_time - start_time), ' sec')
+    
 def AES_CFB():
     start_time = time.time()
 

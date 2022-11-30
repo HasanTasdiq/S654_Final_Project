@@ -282,11 +282,7 @@ def decrypt_ctr(  ciphertext, iv):
 
 
 def encrypt(key, plaintext, workload=100000):
-    """
-    Encrypts `plaintext` with `key` using AES-128, an HMAC to verify integrity,
-    and PBKDF2 to stretch the given key.
-    The exact algorithm is specified in the module docstring.
-    """
+
     if isinstance(key, str):
         key = key.encode('utf-8')
     if isinstance(plaintext, str):
@@ -304,11 +300,7 @@ def encrypt(key, plaintext, workload=100000):
     return hmac + salt + ciphertext
 
 def decrypt(key, ciphertext, workload=100000):
-    """
-    Decrypts `ciphertext` with `key` using AES-128, an HMAC to verify integrity,
-    and PBKDF2 to stretch the given key.
-    The exact algorithm is specified in the module docstring.
-    """
+
 
     assert len(ciphertext) % 16 == 0, "Ciphertext must be made of full 16-byte blocks."
 
